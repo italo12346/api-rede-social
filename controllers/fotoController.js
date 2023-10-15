@@ -20,7 +20,7 @@ exports.createFoto = async (req, res) => {
       $push: { fotosPublicadas: novaFoto._id },
     });
 
-    res.json(novaFoto);
+    res.status(201).json({ message: "Foto criada com sucesso." });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Erro ao criar a foto." });
@@ -35,7 +35,7 @@ exports.listFotos = async (req, res) => {
       select: 'nome usuario fotoPerfil',
     }).populate({
       path: 'comentarios',
-      select: 'conteudo', // Selecione apenas o campo de conteúdo dos comentários
+      select: 'autor conteudo',
     });
 
     res.json(fotos);

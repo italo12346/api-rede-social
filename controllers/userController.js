@@ -4,18 +4,19 @@ const User = require("../models/User");
 // Controlador para criar um novo usuário
 exports.createUser = async (req, res) => {
   try {
-    const { nome, usuario, email, fotoPerfil } = req.body;
+    const { nome, usuario, email, senha, fotoPerfil } = req.body;
 
     const newUser = new User({
       nome,
       usuario,
       email,
+      senha,
       fotoPerfil,
     });
 
     await newUser.save();
 
-    res.json(newUser);
+    res.status(201).json({ message: "Usuário criado com sucesso" });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Erro ao criar o usuário." });
@@ -27,7 +28,7 @@ exports.listUsers = async (req, res) => {
   try {
     const users = await User.find();
 
-    res.json(users);
+    res.status(200).json(users);
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Erro ao listar os usuários." });
@@ -44,7 +45,7 @@ exports.getUserById = async (req, res) => {
       return res.status(404).json({ error: "Usuário não encontrado." });
     }
 
-    res.json(user);
+    res.status(200).json(user);
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Erro ao buscar o usuário." });
@@ -65,7 +66,7 @@ exports.updateUserById = async (req, res) => {
       return res.status(404).json({ error: "Usuário não encontrado." });
     }
 
-    res.json(user);
+    res.status(200).json(user);
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Erro ao atualizar o usuário." });
@@ -82,7 +83,7 @@ exports.deleteUserById = async (req, res) => {
       return res.status(404).json({ error: "Usuário não encontrado." });
     }
 
-    res.json({ message: "Usuário excluído com sucesso." });
+    res.status(200).json({ message: "Usuário excluído com sucesso." });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Erro ao excluir o usuário." });

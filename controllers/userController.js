@@ -2,7 +2,6 @@
 const User = require("../models/User");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const dotenv = require("dotenv");
 
 // Controlador para criar um novo usuário
 exports.createUser = async (req, res) => {

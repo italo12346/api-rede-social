@@ -7,24 +7,28 @@ exports.createComentario = async (req, res) => {
   try {
     const { conteudo, autorId, fotoId } = req.body;
 
+    // Encontre a foto com base no ID
+    const foto = await Foto.findById(fotoId);
+
+    if (!foto) {
+      return res.status(404).json({ error: 'Foto não encontrada.' });
+    }
+
     // Crie um novo comentário
-    const novoComentario = new Comentario({
+    const novoComentario = {
       conteudo,
       autor: autorId,
-      foto: fotoId,
-    });
+    };
 
-    await novoComentario.save();
-
-    // Atualize a foto com o novo comentário
-    await Foto.findByIdAndUpdate(fotoId, {
-      $push: { comentarios: novoComentario._id },
-    });
+    // Adicione o comentário ao array de comentários da foto
+    foto.comentarios.push(novoComentario);
+    
+    await foto.save();
 
     res.json(novoComentario);
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: "Erro ao postar o comentário." });
+    res.status(500).json({ error: 'Erro ao postar o comentário.' });
   }
 };
 

@@ -14,10 +14,10 @@ exports.createUser = async (req, res) => {
     if (!senha || senha.trim() === "") return res.status(422).json({ message: "A senha é obrigatorio." });
 
     const userExist = await User.findOne({email : email});
-    if (userExist) return res.status(422).json({message: "O usuário já está cadastrado com esse email."});
+    if (userExist) return res.status(422).json({message: "Já existe um usuário cadastrado com esse email."});
 
     const salt = await bcrypt.genSalt(12);
-    const senhaHash = await bcrypt.hash(senha, salt)
+    const senhaHash = await bcrypt.hash(senha, salt);
 
     const newUser = new User({
       nome,
@@ -34,6 +34,21 @@ exports.createUser = async (req, res) => {
     console.error(err);
     res.status(500).json({ error: "Erro ao criar o usuário." });
   }
+};
+
+// Controlador para login de usuário
+exports.login = async (req, res) => {
+  const { email, senha } = req.body;
+
+  if (!email || email.trim() === "") return res.status(422).json({ message: "O email é obrigatorio." });
+  if (!senha || senha.trim() === "") return res.status(422).json({ message: "A senha é obrigatorio." });
+
+  const user = await User.findOne({email : email});
+  if (!user) return res.status(404).json({ message: "Usuário não encontrado." });
+
+  const checkPassword = await bcrypt.compare(senha, user.senha)
+  if (!checkPassword) return res.status(422).json({ message: "Senha inválida." });
+
 };
 
 // Controlador para listar todos os usuários

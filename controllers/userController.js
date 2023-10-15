@@ -2,6 +2,7 @@
 const User = require("../models/User");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const dotenv = require("dotenv");
 
 // Controlador para criar um novo usuário
 exports.createUser = async (req, res) => {
@@ -49,6 +50,19 @@ exports.login = async (req, res) => {
   const checkPassword = await bcrypt.compare(senha, user.senha)
   if (!checkPassword) return res.status(422).json({ message: "Senha inválida." });
 
+  try {
+    const secret = process.env.SECRET
+    const token = jwt.sign(
+      {
+        id: user._id,
+      },
+      secret,
+    )
+
+    res.status(200).json({ message: "Autenticação realizada com sucesso.", token });
+  } catch (err) {
+    console.log(error)
+  }
 };
 
 // Controlador para listar todos os usuários

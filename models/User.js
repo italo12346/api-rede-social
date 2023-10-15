@@ -7,9 +7,6 @@ const userSchema = new mongoose.Schema({
   email: String,
   fotoPerfil: String,
   fotosPublicadas: [{ type: mongoose.Schema.Types.ObjectId, ref: "Foto" }],
-  comentariosPublicados: [
-    { type: mongoose.Schema.Types.ObjectId, ref: "Comentario" },
-  ],
 });
 
 module.exports = mongoose.model("User", userSchema);

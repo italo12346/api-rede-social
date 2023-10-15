@@ -14,6 +14,11 @@ exports.createUser = async (req, res) => {
       fotoPerfil,
     });
 
+    if (!nome || nome.trim() === "") return res.status(422).json({ message: "O nome é obrigatorio." });
+    if (!usuario || usuario.trim() === "") return res.status(422).json({ message: "O nome de usuário é obrigatorio." });
+    if (!email || email.trim() === "") return res.status(422).json({ message: "O email é obrigatorio." });
+    if (!senha || senha.trim() === "") return res.status(422).json({ message: "A senha é obrigatorio." });
+
     await newUser.save();
 
     res.status(201).json({ message: "Usuário criado com sucesso" });

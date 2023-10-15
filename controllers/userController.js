@@ -19,6 +19,9 @@ exports.createUser = async (req, res) => {
     if (!email || email.trim() === "") return res.status(422).json({ message: "O email é obrigatorio." });
     if (!senha || senha.trim() === "") return res.status(422).json({ message: "A senha é obrigatorio." });
 
+    const userExist = await User.findOne({email : email})
+    if (userExist) return res.status(422).json({message: "O usuário já está cadastrado com esse email."})
+
     await newUser.save();
 
     res.status(201).json({ message: "Usuário criado com sucesso" });

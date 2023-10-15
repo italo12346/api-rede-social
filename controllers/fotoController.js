@@ -27,20 +27,24 @@ exports.createFoto = async (req, res) => {
   }
 };
 
-// Controlador para listar todas as fotos
+// Controlador para listar todas as fotos com os conteúdos dos comentários
 exports.listFotos = async (req, res) => {
   try {
-    const fotos = await Foto.find().populate(
-      "autor",
-      "nome usuario fotoPerfil"
-    );
+    const fotos = await Foto.find().populate({
+      path: 'autor',
+      select: 'nome usuario fotoPerfil',
+    }).populate({
+      path: 'comentarios',
+      select: 'conteudo', // Selecione apenas o campo de conteúdo dos comentários
+    });
 
     res.json(fotos);
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: "Erro ao listar as fotos." });
+    res.status(500).json({ error: 'Erro ao listar as fotos.' });
   }
 };
+
 
 // Controlador para buscar uma foto por ID
 exports.getFotoById = async (req, res) => {

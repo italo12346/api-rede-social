@@ -1,26 +1,31 @@
 // controllers/userController.js
 const User = require("../models/User");
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 
 // Controlador para criar um novo usuário
 exports.createUser = async (req, res) => {
   try {
     const { nome, usuario, email, senha, fotoPerfil } = req.body;
 
-    const newUser = new User({
-      nome,
-      usuario,
-      email,
-      senha,
-      fotoPerfil,
-    });
-
     if (!nome || nome.trim() === "") return res.status(422).json({ message: "O nome é obrigatorio." });
     if (!usuario || usuario.trim() === "") return res.status(422).json({ message: "O nome de usuário é obrigatorio." });
     if (!email || email.trim() === "") return res.status(422).json({ message: "O email é obrigatorio." });
     if (!senha || senha.trim() === "") return res.status(422).json({ message: "A senha é obrigatorio." });
 
-    const userExist = await User.findOne({email : email})
-    if (userExist) return res.status(422).json({message: "O usuário já está cadastrado com esse email."})
+    const userExist = await User.findOne({email : email});
+    if (userExist) return res.status(422).json({message: "O usuário já está cadastrado com esse email."});
+
+    const salt = await bcrypt.genSalt(12);
+    const senhaHash = await bcrypt.hash(senha, salt)
+
+    const newUser = new User({
+      nome,
+      usuario,
+      email,
+      senha: senhaHash,
+      fotoPerfil,
+    });
 
     await newUser.save();
 

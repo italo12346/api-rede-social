@@ -46,7 +46,7 @@ exports.login = async (req, res) => {
   const user = await User.findOne({email : email});
   if (!user) return res.status(404).json({ message: "Usuário não encontrado." });
 
-  const checkPassword = await bcrypt.compare(senha, user.senha)
+  const checkPassword = await bcrypt.compare(senha, user.senha);
   if (!checkPassword) return res.status(422).json({ message: "Senha inválida." });
 
   try {
@@ -60,7 +60,7 @@ exports.login = async (req, res) => {
 
     res.status(200).json({ message: "Autenticação realizada com sucesso.", token });
   } catch (err) {
-    console.log(error)
+    console.log(err)
   }
 };
 
@@ -80,7 +80,7 @@ exports.listUsers = async (req, res) => {
 exports.getUserById = async (req, res) => {
   try {
     const userId = req.params.id;
-    const user = await User.findById(userId);
+    const user = await User.findById(userId, '-senha');
 
     if (!user) {
       return res.status(404).json({ error: "Usuário não encontrado." });

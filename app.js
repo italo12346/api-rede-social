@@ -2,6 +2,9 @@ const express = require("express");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const dotenv = require("dotenv");
+const swaggerUi = require('swagger-ui-express');
+const swaggerSpec = require('./swaggerConfig');
+
 
 dotenv.config();
 
@@ -25,6 +28,7 @@ const userRoutes = require("./routes/user");
 const fotoRoutes = require("./routes/foto");
 const comentarioRoutes = require("./routes/comentario");
 
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec))
 app.use("/user", userRoutes);
 app.use("/foto", fotoRoutes);
 app.use("/comentario", comentarioRoutes);

@@ -1,6 +1,6 @@
 // controllers/comentarioController.js
 const Comentario = require("../models/Comentario");
-const Foto = require("../models/Foto"); // Certifique-se de que o caminho para o modelo Foto está correto
+const Foto = require("../models/Foto");
 
 // Controlador para criar um novo comentário
 exports.createComentario = async (req, res) => {

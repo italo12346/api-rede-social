@@ -6,7 +6,8 @@ const jwt = require("jsonwebtoken");
 // Controlador para criar um novo usuário
 exports.createUser = async (req, res) => {
   try {
-    const { nome, usuario, email, senha, fotoPerfil } = req.body;
+    const { nome, usuario, email, senha } = req.body;
+    const fotoPerfil = req.file.filename;
 
     if (!nome || nome.trim() === "") return res.status(422).json({ message: "O nome é obrigatorio." });
     if (!usuario || usuario.trim() === "") return res.status(422).json({ message: "O nome de usuário é obrigatorio." });
@@ -26,7 +27,7 @@ exports.createUser = async (req, res) => {
       senha: senhaHash,
       fotoPerfil,
     });
-
+    
     await newUser.save();
 
     res.status(201).json({ message: "Usuário criado com sucesso" });

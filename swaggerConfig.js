@@ -8,13 +8,13 @@ const options = {
       version: '1.0.0',
       description: 'Documentação da API',
     },
-    securityDefinitions: {
-        bearerAuth: {
-          type: "apiKey",
-          name: "Authorization",
-          in: "header",
-        },
+  securityDefinitions: {
+    bearerAuth: {
+      type: "apiKey",
+      name: "Authorization",
+      in: "header",
       },
+    },
   },
   apis: ['doc/api-docs.js'],
 };

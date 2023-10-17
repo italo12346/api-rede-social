@@ -24,8 +24,6 @@
  *   post:
  *     summary: Cria um novo usuário
  *     tags: [User]
- *     security:
- *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:

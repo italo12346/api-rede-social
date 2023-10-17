@@ -12,7 +12,7 @@ const port = process.env.PORT || 3000;
 
 app.use(bodyParser.json());
 
-mongoose.connect(process.env.MONGODB_URI, {
+mongoose.connect(process.env.MONGODB_URL, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });

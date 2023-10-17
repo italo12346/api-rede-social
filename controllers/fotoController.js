@@ -68,11 +68,15 @@ exports.getFotoById = async (req, res) => {
 exports.updateFotoById = async (req, res) => {
   try {
     const fotoId = req.params.id;
-    const updatedFoto = req.body;
+    const { descricao } = req.body; // Apenas atualiza a descrição
 
-    const foto = await Foto.findByIdAndUpdate(fotoId, updatedFoto, {
-      new: true,
-    });
+    const foto = await Foto.findByIdAndUpdate(
+      fotoId,
+      { descricao }, // Atualiza apenas a descrição
+      {
+        new: true,
+      }
+    );
 
     if (!foto) {
       return res.status(404).json({ error: "Foto não encontrada." });
@@ -81,7 +85,7 @@ exports.updateFotoById = async (req, res) => {
     res.json(foto);
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: "Erro ao atualizar a foto." });
+    res.status(500).json({ error: "Erro ao atualizar a descrição da foto." });
   }
 };
 

@@ -64,15 +64,15 @@ exports.getFotoById = async (req, res) => {
   }
 };
 
-// Controlador para atualizar uma foto por ID
+// Controlador para atualizar a descrição de uma foto por ID
 exports.updateFotoById = async (req, res) => {
   try {
     const fotoId = req.params.id;
-    const { descricao } = req.body; // Apenas atualiza a descrição
+    const { descricao } = req.body; 
 
     const foto = await Foto.findByIdAndUpdate(
       fotoId,
-      { descricao }, // Atualiza apenas a descrição
+      { descricao },
       {
         new: true,
       }

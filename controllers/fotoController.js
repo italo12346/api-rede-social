@@ -5,7 +5,8 @@ const User = require("../models/User");
 // Controlador para criar uma nova foto
 exports.createFoto = async (req, res) => {
   try {
-    const { imagem, descricao, autorId } = req.body;
+    const { descricao, autorId } = req.body;
+    const  imagem  = req.file.filename
 
     const novaFoto = new Foto({
       imagem,

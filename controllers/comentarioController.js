@@ -5,7 +5,8 @@ const Foto = require("../models/Foto");
 // Controlador para criar um novo comentário
 exports.createComentario = async (req, res) => {
   try {
-    const { conteudo, autorId, fotoId } = req.body;
+    const autorId = req.user.id;
+    const { conteudo, fotoId } = req.body;
 
     // Crie um novo comentário
     const novoComentario = new Comentario({

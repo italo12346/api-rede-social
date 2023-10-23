@@ -1,13 +1,15 @@
 // controllers/fotoController.js
 const Foto = require("../models/Foto");
 const User = require("../models/User");
+const Comentario = require("../models/Comentario")
 
 // Controlador para criar uma nova foto
 exports.createFoto = async (req, res) => {
   try {
-    const { descricao, autorId } = req.body;
-    const  imagem  = req.file.filename
-
+    const autorId = req.user.id;
+    const { descricao } = req.body;
+    const imagem = req.file.filename;
+    
     const novaFoto = new Foto({
       imagem,
       descricao,
@@ -70,19 +72,20 @@ exports.updateFotoById = async (req, res) => {
     const fotoId = req.params.id;
     const { descricao } = req.body; 
 
-    const foto = await Foto.findByIdAndUpdate(
-      fotoId,
-      { descricao },
-      {
-        new: true,
-      }
-    );
+    const foto = await Foto.findById(fotoId);
 
     if (!foto) {
       return res.status(404).json({ error: "Foto não encontrada." });
     }
 
-    res.json(foto);
+    if (foto.autor.toString() !== req.user.id) {
+      return res.status(403).json({ error: "Você não tem permissão para atualizar esta foto." });
+    }
+
+    foto.descricao = descricao;
+    const fotoAtualizada = await foto.save();
+
+    res.json(fotoAtualizada);
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Erro ao atualizar a descrição da foto." });
@@ -93,16 +96,23 @@ exports.updateFotoById = async (req, res) => {
 exports.deleteFotoById = async (req, res) => {
   try {
     const fotoId = req.params.id;
-    const foto = await Foto.findByIdAndDelete(fotoId);
+    const foto = await Foto.findById(fotoId);
 
     if (!foto) {
       return res.status(404).json({ error: "Foto não encontrada." });
     }
 
-    // Remova a referência da foto no perfil do autor
+    if (foto.autor.toString() !== req.user.id) {
+      return res.status(403).json({ error: "Você não tem permissão para excluir esta foto." });
+    }
+
+    await Comentario.deleteMany({ foto: fotoId });
+
     await User.findByIdAndUpdate(foto.autor, {
       $pull: { fotosPublicadas: fotoId },
     });
+
+    await foto.deleteOne({ _id: fotoId });
 
     res.json({ message: "Foto excluída com sucesso." });
   } catch (err) {

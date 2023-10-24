@@ -35,7 +35,7 @@ exports.listFotos = async (req, res) => {
   try {
     const fotos = await Foto.find().populate({
       path: 'autor',
-      select: 'nome usuario fotoPerfil',
+      select: 'usuario fotoPerfil',
     }).populate({
       path: 'comentarios',
       select: 'autor conteudo',
@@ -45,6 +45,27 @@ exports.listFotos = async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Erro ao listar as fotos.' });
+  }
+};
+
+
+//Controlador para listar as fotos de um usuário
+exports.listFotosDoUsuario = async (req, res) => {
+  try {
+    const userId = req.params.id; // Suponha que o ID do usuário seja passado nos parâmetros da rota
+
+    const fotosDoUsuario = await Foto.find({ autor: userId }).populate({
+      path: 'autor',
+      select: 'usuario fotoPerfil',
+    }).populate({
+      path: 'comentarios',
+      select: 'autor conteudo',
+    });
+
+    res.json(fotosDoUsuario);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Erro ao listar as fotos do usuário.' });
   }
 };
 

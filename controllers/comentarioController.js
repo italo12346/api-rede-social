@@ -44,20 +44,20 @@ exports.listComentarios = async (req, res) => {
   }
 };
 
-// Controlador para buscar um comentário por ID
+// Controlador para buscar comentários de uma foto
 exports.getComentarioById = async (req, res) => {
-  try {
-    const comentarioId = req.params.id;
-    const comentario = await Comentario.findById(comentarioId);
+ try {
+    const fotoId = req.params.id;
 
-    if (!comentario) {
-      return res.status(404).json({ error: "Comentário não encontrado." });
-    }
+    const comentarios = await Comentario.find({ foto: fotoId }).populate(
+      'autor',
+      'usuario fotoPerfil'
+    );
 
-    res.json(comentario);
+    res.json(comentarios);
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: "Erro ao buscar o comentário." });
+    res.status(500).json({ error: 'Erro ao listar os comentários.' });
   }
 };
 

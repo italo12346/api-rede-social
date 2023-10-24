@@ -68,7 +68,10 @@ exports.login = async (req, res) => {
 // Controlador para listar todos os usuários
 exports.listUsers = async (req, res) => {
   try {
-    const users = await User.find();
+    const users = await User.find()
+    .select('-nome')
+    .select('-senha')
+    .select('-email');
 
     res.status(200).json(users);
   } catch (err) {
@@ -81,7 +84,7 @@ exports.listUsers = async (req, res) => {
 exports.getUserById = async (req, res) => {
   try {
     const userId = req.params.id;
-    const user = await User.findById(userId, '-senha');
+    const user = await User.findById(userId, '-senha').select('-email');
 
     if (!user) {
       return res.status(404).json({ error: "Usuário não encontrado." });

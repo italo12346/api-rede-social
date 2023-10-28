@@ -9,13 +9,27 @@ exports.createUser = async (req, res) => {
     const { nome, usuario, email, senha } = req.body;
     const fotoPerfil = req.file.filename;
 
-    if (!nome || nome.trim() === "") return res.status(422).json({ message: "O nome é obrigatorio." });
-    if (!usuario || usuario.trim() === "") return res.status(422).json({ message: "O nome de usuário é obrigatorio." });
-    if (!email || email.trim() === "") return res.status(422).json({ message: "O email é obrigatorio." });
-    if (!senha || senha.trim() === "") return res.status(422).json({ message: "A senha é obrigatorio." });
+    if (!nome || nome.trim() === ""){
+      return res.status(422).json({ message: "O nome é obrigatorio." });
+    } 
+
+    if (!usuario || usuario.trim() === ""){
+      return res.status(422).json({ message: "O nome de usuário é obrigatorio." });
+    } 
+
+    if (!email || email.trim() === ""){
+      return res.status(422).json({ message: "O email é obrigatorio." });
+    }
+
+    if (!senha || senha.trim() === ""){
+      return res.status(422).json({ message: "A senha é obrigatorio." });
+    }
 
     const userExist = await User.findOne({email : email});
-    if (userExist) return res.status(422).json({message: "Já existe um usuário cadastrado com esse email."});
+    
+    if (userExist){
+      return res.status(422).json({message: "Já existe um usuário cadastrado com esse email."});
+    }
 
     const salt = await bcrypt.genSalt(12);
     const senhaHash = await bcrypt.hash(senha, salt);
@@ -41,14 +55,23 @@ exports.createUser = async (req, res) => {
 exports.login = async (req, res) => {
   const { email, senha } = req.body;
 
-  if (!email || email.trim() === "") return res.status(422).json({ message: "O email é obrigatorio." });
-  if (!senha || senha.trim() === "") return res.status(422).json({ message: "A senha é obrigatorio." });
+  if (!email || email.trim() === ""){
+    return res.status(422).json({ message: "O email é obrigatorio." });
+  } 
+  if (!senha || senha.trim() === ""){
+    return res.status(422).json({ message: "A senha é obrigatorio." });
+  }
 
   const user = await User.findOne({email : email});
-  if (!user) return res.status(404).json({ message: "Usuário não encontrado." });
+
+  if (!user) {
+    return res.status(404).json({ message: "Usuário não encontrado." });
+  }
 
   const checkPassword = await bcrypt.compare(senha, user.senha);
-  if (!checkPassword) return res.status(422).json({ message: "Senha inválida." });
+  if (!checkPassword) {
+    return res.status(422).json({ message: "Senha inválida." });
+  }
 
   try {
     const secret = process.env.SECRET

@@ -52,7 +52,7 @@ exports.listFotos = async (req, res) => {
 //Controlador para listar as fotos de um usuário
 exports.listFotosDoUsuario = async (req, res) => {
   try {
-    const userId = req.params.id; // Suponha que o ID do usuário seja passado nos parâmetros da rota
+    const userId = req.params.id;
 
     const fotosDoUsuario = await Foto.find({ autor: userId }).populate({
       path: 'autor',

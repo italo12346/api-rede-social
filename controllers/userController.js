@@ -8,15 +8,17 @@ const jwt = require("jsonwebtoken");
 exports.createUser = async (req, res) => {
   try {
     const { nome, usuario, email, senha } = req.body;
-    const fotoPerfil = req.file.filename;
+    const file = req.file;
 
     if (!nome || nome.trim() === "") {
       return res.status(422).json({ message: "O nome é obrigatorio." });
-    } 
+    }
 
     if (!usuario || usuario.trim() === "") {
-      return res.status(422).json({ message: "O nome de usuário é obrigatorio." });
-    } 
+      return res
+        .status(422)
+        .json({ message: "O nome de usuário é obrigatorio." });
+    }
 
     if (!email || email.trim() === "") {
       return res.status(422).json({ message: "O email é obrigatorio." });
@@ -26,10 +28,12 @@ exports.createUser = async (req, res) => {
       return res.status(422).json({ message: "A senha é obrigatorio." });
     }
 
-    const userExist = await User.findOne({email : email});
+    const userExist = await User.findOne({ email: email });
 
     if (userExist) {
-      return res.status(422).json({message: "Já existe um usuário cadastrado com esse email."});
+      return res
+        .status(422)
+        .json({ message: "Já existe um usuário cadastrado com esse email." });
     }
 
     const salt = await bcrypt.genSalt(12);
@@ -40,9 +44,9 @@ exports.createUser = async (req, res) => {
       usuario,
       email,
       senha: senhaHash,
-      fotoPerfil,
+      fotoPerfil: file.path,
     });
-    
+
     await newUser.save();
 
     res.status(201).json({ message: "Usuário criado com sucesso" });
@@ -56,14 +60,14 @@ exports.createUser = async (req, res) => {
 exports.login = async (req, res) => {
   const { email, senha } = req.body;
 
-  if (!email || email.trim() === ""){
+  if (!email || email.trim() === "") {
     return res.status(422).json({ message: "O email é obrigatorio." });
-  } 
-  if (!senha || senha.trim() === ""){
+  }
+  if (!senha || senha.trim() === "") {
     return res.status(422).json({ message: "A senha é obrigatorio." });
   }
 
-  const user = await User.findOne({email : email});
+  const user = await User.findOne({ email: email });
 
   if (!user) {
     return res.status(404).json({ message: "Usuário não encontrado." });
@@ -75,29 +79,33 @@ exports.login = async (req, res) => {
   }
 
   try {
-    const secret = process.env.SECRET
+    const secret = process.env.SECRET;
     const token = jwt.sign(
       {
         id: user._id,
       },
-      secret,
-    )
+      secret
+    );
 
-    res.status(200).json({ message: "Autenticação realizada com sucesso.", token });
+    res
+      .status(200)
+      .json({ message: "Autenticação realizada com sucesso.", token });
   } catch (err) {
-    console.log(err)
+    console.log(err);
   }
 };
 
 // Controlador para listar todos os usuários
 exports.listUsers = async (req, res) => {
   try {
-    const users = await User.find({}, '_id nome usuario fotoPerfil');
-    
-    const usersWithPhotoCount = await Promise.all(users.map(async (user) => {
-      const publicacoes = await Foto.countDocuments({ autor: user._id });
-      return { ...user.toObject(), publicacoes };
-    }));
+    const users = await User.find({}, "_id nome usuario fotoPerfil");
+
+    const usersWithPhotoCount = await Promise.all(
+      users.map(async (user) => {
+        const publicacoes = await Foto.countDocuments({ autor: user._id });
+        return { ...user.toObject(), publicacoes };
+      })
+    );
 
     res.status(200).json(usersWithPhotoCount);
   } catch (err) {
@@ -110,14 +118,16 @@ exports.listUsers = async (req, res) => {
 exports.getUserById = async (req, res) => {
   try {
     const userId = req.params.id;
-    const user = await User.findById(userId, '-senha').select('-email').select('-fotosPublicadas');
+    const user = await User.findById(userId, "-senha")
+      .select("-email")
+      .select("-fotosPublicadas");
 
     if (!user) {
       return res.status(404).json({ error: "Usuário não encontrado." });
     }
 
     const publicacoes = await Foto.countDocuments({ autor: userId });
-    
+
     const userWithPhotoCount = { ...user.toObject(), publicacoes };
 
     res.status(200).json(userWithPhotoCount);

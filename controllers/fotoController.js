@@ -1,17 +1,17 @@
 // controllers/fotoController.js
 const Foto = require("../models/Foto");
 const User = require("../models/User");
-const Comentario = require("../models/Comentario")
+const Comentario = require("../models/Comentario");
 
 // Controlador para criar uma nova foto
 exports.createFoto = async (req, res) => {
   try {
     const autorId = req.user.id;
     const { descricao } = req.body;
-    const imagem = req.file.filename;
-    
+    const file = req.file;
+
     const novaFoto = new Foto({
-      imagem,
+      imagem: file.path,
       descricao,
       autor: autorId,
     });
@@ -33,42 +33,44 @@ exports.createFoto = async (req, res) => {
 // Controlador para listar todas as fotos com os conteúdos dos comentários
 exports.listFotos = async (req, res) => {
   try {
-    const fotos = await Foto.find().populate({
-      path: 'autor',
-      select: 'usuario fotoPerfil',
-    }).populate({
-      path: 'comentarios',
-      select: 'autor conteudo',
-    });
+    const fotos = await Foto.find()
+      .populate({
+        path: "autor",
+        select: "usuario fotoPerfil",
+      })
+      .populate({
+        path: "comentarios",
+        select: "autor conteudo",
+      });
 
     res.json(fotos);
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: 'Erro ao listar as fotos.' });
+    res.status(500).json({ error: "Erro ao listar as fotos." });
   }
 };
-
 
 //Controlador para listar as fotos de um usuário
 exports.listFotosDoUsuario = async (req, res) => {
   try {
     const userId = req.params.id;
 
-    const fotosDoUsuario = await Foto.find({ autor: userId }).populate({
-      path: 'autor',
-      select: 'usuario fotoPerfil',
-    }).populate({
-      path: 'comentarios',
-      select: 'autor conteudo',
-    });
+    const fotosDoUsuario = await Foto.find({ autor: userId })
+      .populate({
+        path: "autor",
+        select: "usuario fotoPerfil",
+      })
+      .populate({
+        path: "comentarios",
+        select: "autor conteudo",
+      });
 
     res.json(fotosDoUsuario);
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: 'Erro ao listar as fotos do usuário.' });
+    res.status(500).json({ error: "Erro ao listar as fotos do usuário." });
   }
 };
-
 
 // Controlador para buscar uma foto por ID
 exports.getFotoById = async (req, res) => {
@@ -91,7 +93,7 @@ exports.getFotoById = async (req, res) => {
 exports.updateFotoById = async (req, res) => {
   try {
     const fotoId = req.params.id;
-    const { descricao } = req.body; 
+    const { descricao } = req.body;
 
     const foto = await Foto.findById(fotoId);
 
@@ -100,7 +102,9 @@ exports.updateFotoById = async (req, res) => {
     }
 
     if (foto.autor.toString() !== req.user.id) {
-      return res.status(403).json({ error: "Você não tem permissão para atualizar esta foto." });
+      return res
+        .status(403)
+        .json({ error: "Você não tem permissão para atualizar esta foto." });
     }
 
     foto.descricao = descricao;
@@ -124,7 +128,9 @@ exports.deleteFotoById = async (req, res) => {
     }
 
     if (foto.autor.toString() !== req.user.id) {
-      return res.status(403).json({ error: "Você não tem permissão para excluir esta foto." });
+      return res
+        .status(403)
+        .json({ error: "Você não tem permissão para excluir esta foto." });
     }
 
     await Comentario.deleteMany({ foto: fotoId });

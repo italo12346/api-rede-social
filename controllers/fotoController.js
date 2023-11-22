@@ -10,15 +10,21 @@ exports.createFoto = async (req, res) => {
     const { descricao } = req.body;
     const file = req.file;
 
+    let imagemBase64 = null;
+
+    if (file) {
+      const fileBuffer = file.buffer;
+      imagemBase64 = fileBuffer.toString("base64");
+    }
+
     const novaFoto = new Foto({
-      imagem: file.path,
+      imagem: imagemBase64,
       descricao,
       autor: autorId,
     });
 
     await novaFoto.save();
 
-    // Atualize o perfil do autor com a nova foto
     await User.findByIdAndUpdate(autorId, {
       $push: { fotosPublicadas: novaFoto._id },
     });

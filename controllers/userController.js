@@ -11,21 +11,21 @@ exports.createUser = async (req, res) => {
     const file = req.file;
 
     if (!nome || nome.trim() === "") {
-      return res.status(422).json({ message: "O nome é obrigatorio." });
+      return res.status(422).json({ message: "O nome é obrigatório." });
     }
 
     if (!usuario || usuario.trim() === "") {
       return res
         .status(422)
-        .json({ message: "O nome de usuário é obrigatorio." });
+        .json({ message: "O nome de usuário é obrigatório." });
     }
 
     if (!email || email.trim() === "") {
-      return res.status(422).json({ message: "O email é obrigatorio." });
+      return res.status(422).json({ message: "O email é obrigatório." });
     }
 
     if (!senha || senha.trim() === "") {
-      return res.status(422).json({ message: "A senha é obrigatorio." });
+      return res.status(422).json({ message: "A senha é obrigatória." });
     }
 
     const userExist = await User.findOne({ email: email });
@@ -39,12 +39,19 @@ exports.createUser = async (req, res) => {
     const salt = await bcrypt.genSalt(12);
     const senhaHash = await bcrypt.hash(senha, salt);
 
+    let fotoPerfilBase64 = null;
+
+    if (file) {
+      const fileBuffer = file.buffer;
+      fotoPerfilBase64 = fileBuffer.toString("base64");
+    }
+
     const newUser = new User({
       nome,
       usuario,
       email,
       senha: senhaHash,
-      fotoPerfil: file.path,
+      fotoPerfil: fotoPerfilBase64,
     });
 
     await newUser.save();

@@ -1,14 +1,11 @@
 const multer = require("multer");
 const path = require("path");
+const fs = require("fs");
+const bcrypt = require("bcrypt");
+const User = require("../models/User");
+const Foto = require("../models/Foto");
 
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, "public/uploads");
-  },
-  filename: function (req, file, cb) {
-    cb(null, Date.now() + path.extname(file.originalname));
-  },
-});
+const storage = multer.memoryStorage();
 
 const upload = multer({ storage: storage });
 

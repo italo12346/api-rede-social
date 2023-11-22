@@ -8,7 +8,7 @@ const jwt = require("jsonwebtoken");
 exports.createUser = async (req, res) => {
   try {
     const { nome, usuario, email, senha } = req.body;
-    const file = req.file;
+    const file = req.file; // Corrigido: atribuição da variável 'file'
 
     if (!nome || nome.trim() === "") {
       return res.status(422).json({ message: "O nome é obrigatório." });
@@ -51,7 +51,11 @@ exports.createUser = async (req, res) => {
       usuario,
       email,
       senha: senhaHash,
+<<<<<<< HEAD
       fotoPerfil: fotoPerfilBase64,
+=======
+      fotoPerfil: file ? file.path : null, // Corrigido: verificar se 'file' existe
+>>>>>>> a3ae29ed062fbed0df95a5fcc567cfbb02f9a664
     });
 
     await newUser.save();

@@ -96,7 +96,11 @@ exports.login = async (req, res) => {
 
     res
       .status(200)
-      .json({ message: "Autenticação realizada com sucesso.", token });
+      .json({
+        message: "Autenticação realizada com sucesso.",
+        token,
+        userId: user._id,
+      });
   } catch (err) {
     console.log(err);
   }

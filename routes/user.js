@@ -11,5 +11,6 @@ router.get("/list", authController.checkToken, userController.listUsers);
 router.get("/:id", authController.checkToken, userController.getUserById);
 router.put("/:id", authController.checkToken, userController.updateUserById);
 router.delete("/:id", authController.checkToken, userController.deleteUserById);
+router.get("/:nomeUsuario", authController.checkToken, userController.getUserByName);
 
 module.exports = router;

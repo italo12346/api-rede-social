@@ -185,3 +185,33 @@ exports.deleteUserById = async (req, res) => {
     res.status(500).json({ error: "Erro ao excluir o usuário." });
   }
 };
+
+// Controlador para buscar um usuário por nome
+exports.getUserByName = async (req, res) => {
+  try {
+    const nomeUsuario = req.params.nomeUsuario;
+
+    console.log('Nome de usuário recebido:', nomeUsuario);
+
+    if (!nomeUsuario || nomeUsuario.trim() === "") {
+      return res.status(422).json({ message: "O nome de usuário é obrigatório." });
+    }
+
+    const user = await User.findOne({ usuario: nomeUsuario }, "-senha")
+      .select("-email")
+      .select("-fotosPublicadas");
+
+    if (!user) {
+      return res.status(404).json({ error: "Usuário não encontrado." });
+    }
+
+    const publicacoes = await Foto.countDocuments({ autor: user._id });
+
+    const userWithPhotoCount = { ...user.toObject(), publicacoes };
+
+    res.status(200).json(userWithPhotoCount);
+  } catch (err) {
+    console.error('Erro ao buscar o usuário pelo nome:', err.message);
+    res.status(500).json({ error: "Erro ao buscar o usuário." });
+  }
+};
